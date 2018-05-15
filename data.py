@@ -68,10 +68,10 @@ class Data(object):
         return {'X': X, 'y': y}
 
     def get_train(self, split=TRAIN_DEV_TEST):
-        return self.X[:int(self.num_examples*split[0])], self.y[:int(self.num_examples*split[0])]
+        return self.X[self.indices][:int(self.num_examples*split[0])], self.y[self.indices][:int(self.num_examples*split[0])]
 
     def get_dev(self, split=TRAIN_DEV_TEST):
-        return self.X[int(self.num_examples*split[0]):int(self.num_examples*split[1])], self.y[int(self.num_examples*split[0]):int(self.num_examples*split[1])]
+        return self.X[self.indices][int(self.num_examples*split[0]):int(self.num_examples*split[1])], self.y[self.indices][int(self.num_examples*split[0]):int(self.num_examples*split[1])]
 
     def get_test(self, split=TRAIN_DEV_TEST):
-        return self.X[int(self.num_examples*split[1]):], self.y[int(self.num_examples*split[1]):]
+        return self.X[self.indices][int(self.num_examples*split[1]):], self.y[self.indices][int(self.num_examples*split[1]):]
