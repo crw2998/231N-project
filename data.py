@@ -1,7 +1,7 @@
 from __future__ import print_function
 import numpy as np
 from scipy.misc import imread, imresize
-from tqdm import tqdm
+# from tqdm import tqdm
 
 from multiprocessing.pool import ThreadPool
 
@@ -56,9 +56,9 @@ class Data(object):
         self.indices = np.random.permutation(range(0, self.num_examples))
 
     def get_image(self, index_file):
-        initial_y = self.initial_y
+        initial_y = self.initial_y      # not mutated by threads; everyone just has a reference
         index, file = index_file
-        self.loaded += 1 # yeah yeah yeah concurrency issues
+        self.loaded += 1                # yeah yeah yeah concurrency issues but I don't care
         if self.loaded % 100 == 0: print('loaded ' + str(self.loaded))
         image_data = imread(file)
         if len(image_data.shape) < 3: return {'X': np.zeros(1, dtype=np.bool), 'y': np.zeros(1, dtype=np.bool)}

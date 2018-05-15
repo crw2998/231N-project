@@ -1,3 +1,9 @@
+#Setup
+```
+cd 231N-project
+./download_data.sh
+```
+#Loading Data
 ```
 from data import Data
 
