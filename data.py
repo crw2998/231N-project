@@ -1,6 +1,7 @@
 from __future__ import print_function
 import numpy as np
 from scipy.misc import imread, imresize
+from sklearn.preprocessing import OneHotEncoder
 # from tqdm import tqdm
 
 from multiprocessing.pool import ThreadPool
@@ -9,7 +10,7 @@ import os
 import hashlib
 import _pickle as cPickle
 
-dims = (48, 64)
+dims = (96, 128)
 random_seed = 231
 
 DEFAULT_X = 'data/cars/car_ims'
@@ -19,7 +20,7 @@ TRAIN_DEV_TEST = (0.65, 0.20, 0.15)
 PATH = '/home/colewinstanley/231N-project'
 
 class Data(object):
-    def __init__(self, xpath=DEFAULT_X, yfile=DEFAULT_Y, useCache=True, cacheSmash=False, threads=8, first=1e80):      # 8 seems best on Google Cloud
+    def __init__(self, xpath=DEFAULT_X, yfile=DEFAULT_Y, useCache=True, cacheSmash=False, threads=8, first=10000000):      # 8 seems best on Google Cloud
         assert(sum(TRAIN_DEV_TEST) == 1.0)
 
         h = hashlib.sha1(bytearray("".join(os.listdir(xpath)) + yfile + str(dims), 'utf-8')).hexdigest()
@@ -77,3 +78,7 @@ class Data(object):
 
     def get_test(self, split=TRAIN_DEV_TEST):
         return self.X[int(self.num_examples*(split[0]+split[1])):].astype(np.float), self.y[int(self.num_examples*(split[0]+split[1])):]
+
+    def get_10(self):
+        first_10 = np.where(self.y < 10)[0]
+        return self.X[first_10].astype(np.float), self.y[first_10]
