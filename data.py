@@ -10,20 +10,21 @@ import os
 import hashlib
 import _pickle as cPickle
 
-dims = (96, 128)
+dims = (128, 128)
 random_seed = 231
 
-DEFAULT_X = 'data/cars/car_ims'
-DEFAULT_Y = 'data/cars/y.npy'
+DEFAULT_X1 = 'data/dogcat/PetImages/Cat'
+DEFAULT_X2 = 'data/dogcat/PetImages/Dog'
+# DEFAULT_Y = 'data/cars/y.npy'
 TRAIN_DEV_TEST = (0.65, 0.20, 0.15)
 
 PATH = '/home/colewinstanley/231N-project'
 
 class Data(object):
-    def __init__(self, xpath=DEFAULT_X, yfile=DEFAULT_Y, useCache=True, cacheSmash=False, threads=8, first=10000000):      # 8 seems best on Google Cloud
+    def __init__(self, xpath1=DEFAULT_X1, xpath2=DEFAULT_X2, useCache=True, cacheSmash=False, threads=8, first=10000000):      # 8 seems best on Google Cloud
         assert(sum(TRAIN_DEV_TEST) == 1.0)
 
-        h = hashlib.sha1(bytearray("".join(os.listdir(xpath)) + yfile + str(dims), 'utf-8')).hexdigest()
+        h = hashlib.sha1(bytearray("".join(os.listdir(xpath1)) + xpath2 + str(dims), 'utf-8')).hexdigest()
         p = os.path.join(PATH, "cache", h + ".pkl")
         useCache = os.access(p, os.R_OK) and useCache and not cacheSmash
         if useCache:
@@ -36,21 +37,29 @@ class Data(object):
                 print ('Cache load failed.')
                 useCache = False
         if not useCache:
-            self.initial_y = np.genfromtxt(yfile)
-            files = [(int(image[:6]), os.path.join(xpath, image)) for image in os.listdir(xpath)][:first]
-            pool = ThreadPool(threads)
             self.loaded = 0
-            results = pool.map(self.get_image, files)
-            self.X = np.concatenate([d['X'] for d in results if d['X'].dtype != np.bool])       # using dtype as sentinel
-            self.y = np.concatenate([d['y'] for d in results if d['X'].dtype != np.bool])
+            files1 = [(int(image[:-4]), os.path.join(xpath1, image)) for image in os.listdir(xpath1) if 'Thum' not in image][:first]
+            files2 = [(int(image[:-4]), os.path.join(xpath2, image)) for image in os.listdir(xpath2) if 'Thum' not in image][:first]
+
+            X1s = [im for im in list(map(self.get_image, files1)) if im.shape == (128, 128, 3)] 
+            X1 = np.concatenate(X1s)
+            X2s = [im for im in list(map(self.get_image, files2)) if im.shape == (128, 128, 3)] 
+            X2 = np.concatenate(X2s)
+
+            self.X = np.concatenate([X1s, X2s])
+
+            self.y = np.concatenate([np.zeros((len(X1s))), np.zeros((len(X2s)))])
+            # pool = ThreadPool(threads)
+            # self.loaded = 0
+            # results = pool.map(self.get_image, files)
+            # self.X = np.concatenate([d['X'] for d in results if d['X'].dtype != np.bool])       # using dtype as sentinel
+            # self.y = np.concatenate([d['y'] for d in results if d['X'].dtype != np.bool])
             if useCache:
                 try:
                     with open(p, 'wb+') as pkl:
                         cPickle.dump((self.X, self.y), pkl)
                 except:
                     print ('Cache dump failed.')
-
-            del self.initial_y
 
         self.num_examples = self.X.shape[0]
         np.random.seed(random_seed)
@@ -59,6 +68,14 @@ class Data(object):
         self.y = self.y[self.indices]
 
     def get_image(self, index_file):
+        index, file = index_file
+        image_data = imread(file)
+        self.loaded += 1
+        if self.loaded % 100 == 0: print('loaded ' + str(self.loaded))
+        image_data = imresize(image_data, dims)
+        return image_data
+
+    def get_image_(self, index_file):
         initial_y = self.initial_y      # not mutated by threads; everyone just has a reference
         index, file = index_file
         self.loaded += 1                # yeah yeah yeah concurrency issues but I don't care
