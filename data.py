@@ -48,7 +48,7 @@ class Data(object):
 
             self.X = np.concatenate([X1s, X2s])
 
-            self.y = np.concatenate([np.zeros((len(X1s))), np.zeros((len(X2s)))])
+            self.y = np.concatenate([np.zeros((len(X1s))), np.ones((len(X2s)))])
             # pool = ThreadPool(threads)
             # self.loaded = 0
             # results = pool.map(self.get_image, files)
