@@ -21,7 +21,7 @@ TRAIN_DEV_TEST = (0.65, 0.20, 0.15)
 PATH = '/home/colewinstanley/231N-project'
 
 class Data(object):
-    def __init__(self, xpath1=DEFAULT_X1, xpath2=DEFAULT_X2, useCache=True, cacheSmash=False, threads=8, first=10000000):      # 8 seems best on Google Cloud
+    def __init__(self, xpath1=DEFAULT_X1, xpath2=DEFAULT_X2, useCache=True, cacheSmash=False, threads=8, first=10000000, x_transpose=(0,1,2,3)):      # 8 seems best on Google Cloud
         assert(sum(TRAIN_DEV_TEST) == 1.0)
 
         h = hashlib.sha1(bytearray("".join(os.listdir(xpath1)) + xpath2 + str(dims), 'utf-8')).hexdigest()
@@ -40,10 +40,10 @@ class Data(object):
             self.loaded = 0
             files1 = [(int(image[:-4]), os.path.join(xpath1, image)) for image in os.listdir(xpath1) if 'Thum' not in image][:first]
             files2 = [(int(image[:-4]), os.path.join(xpath2, image)) for image in os.listdir(xpath2) if 'Thum' not in image][:first]
-
-            X1s = [im for im in list(map(self.get_image, files1)) if im.shape == (128, 128, 3)] 
+            pool = ThreadPool(threads)
+            X1s = [im for im in list(pool.map(self.get_image, files1)) if im.shape == (128, 128, 3)] 
             X1 = np.concatenate(X1s)
-            X2s = [im for im in list(map(self.get_image, files2)) if im.shape == (128, 128, 3)] 
+            X2s = [im for im in list(pool.map(self.get_image, files2)) if im.shape == (128, 128, 3)] 
             X2 = np.concatenate(X2s)
 
             self.X = np.concatenate([X1s, X2s])
@@ -61,6 +61,7 @@ class Data(object):
                 except:
                     print ('Cache dump failed.')
 
+        self.X = self.X.transpose(x_transpose)
         self.num_examples = self.X.shape[0]
         np.random.seed(random_seed)
         self.indices = np.random.permutation(range(0, self.num_examples))
