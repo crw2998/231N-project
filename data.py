@@ -27,7 +27,6 @@ class Data(object):
     def __init__(self, xpath1=DEFAULT_X1, xpath2=DEFAULT_X2, useCache=True, cacheSmash=False, threads=8, first=10000000, x_transpose=(0,1,2,3)):      # 8 seems best on Google Cloud
         assert(sum(TRAIN_DEV_TEST) == 1.0)
 
-        print(xpath1)
         h = hashlib.sha1(bytearray("".join(os.listdir(xpath1)) + xpath2 + str(dims), 'utf-8')).hexdigest()
         p = os.path.join(PATH, "cache", h + ".pkl")
         useCache = os.access(p, os.R_OK) and useCache and not cacheSmash
