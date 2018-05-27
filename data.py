@@ -13,8 +13,11 @@ import _pickle as cPickle
 dims = (128, 128)
 random_seed = 231
 
-DEFAULT_X1 = 'Cat'
-DEFAULT_X2 = 'Dog'
+dims = (128, 128)
+random_seed = 231
+
+DEFAULT_X1 = 'data/dogcat/PetImages/Cat'
+DEFAULT_X2 = 'data/dogcat/PetImages/Dog'
 # DEFAULT_Y = 'data/cars/y.npy'
 TRAIN_DEV_TEST = (0.65, 0.20, 0.15)
 
@@ -24,6 +27,7 @@ class Data(object):
     def __init__(self, xpath1=DEFAULT_X1, xpath2=DEFAULT_X2, useCache=True, cacheSmash=False, threads=8, first=10000000, x_transpose=(0,1,2,3)):      # 8 seems best on Google Cloud
         assert(sum(TRAIN_DEV_TEST) == 1.0)
 
+        print(xpath1)
         h = hashlib.sha1(bytearray("".join(os.listdir(xpath1)) + xpath2 + str(dims), 'utf-8')).hexdigest()
         p = os.path.join(PATH, "cache", h + ".pkl")
         useCache = os.access(p, os.R_OK) and useCache and not cacheSmash
