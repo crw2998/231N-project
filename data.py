@@ -10,10 +10,7 @@ import os
 import hashlib
 import _pickle as cPickle
 
-dims = (128, 128)
-random_seed = 231
-
-dims = (128, 128)
+dims = (64,64)
 random_seed = 231
 
 DEFAULT_X1 = 'data/dogcat/PetImages/Cat'
@@ -44,9 +41,9 @@ class Data(object):
             files1 = [(int(image[:-4]), os.path.join(xpath1, image)) for image in os.listdir(xpath1) if 'Thum' not in image][:first]
             files2 = [(int(image[:-4]), os.path.join(xpath2, image)) for image in os.listdir(xpath2) if 'Thum' not in image][:first]
             pool = ThreadPool(threads)
-            X1s = [im[0] for im in list(pool.map(self.get_image, files1)) if im[0].shape == (128, 128, 3) and im[1]] 
+            X1s = [im[0] for im in list(pool.map(self.get_image, files1)) if im[0].shape == (dims[0], dims[1], 3) and im[1]] 
             X1 = np.concatenate(X1s)
-            X2s = [im[0] for im in list(pool.map(self.get_image, files2)) if im[0].shape == (128, 128, 3) and im[1]] 
+            X2s = [im[0] for im in list(pool.map(self.get_image, files2)) if im[0].shape == (dims[0], dims[1], 3) and im[1]] 
             X2 = np.concatenate(X2s)
 
             self.X = np.concatenate([X1s, X2s])
