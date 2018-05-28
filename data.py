@@ -44,19 +44,14 @@ class Data(object):
             files1 = [(int(image[:-4]), os.path.join(xpath1, image)) for image in os.listdir(xpath1) if 'Thum' not in image][:first]
             files2 = [(int(image[:-4]), os.path.join(xpath2, image)) for image in os.listdir(xpath2) if 'Thum' not in image][:first]
             pool = ThreadPool(threads)
-            X1s = [im for im in list(pool.map(self.get_image, files1)) if im.shape == (128, 128, 3)] 
+            X1s = [im[0] for im in list(pool.map(self.get_image, files1)) if im[0].shape == (128, 128, 3) and im[1]] 
             X1 = np.concatenate(X1s)
-            X2s = [im for im in list(pool.map(self.get_image, files2)) if im.shape == (128, 128, 3)] 
+            X2s = [im[0] for im in list(pool.map(self.get_image, files2)) if im[0].shape == (128, 128, 3) and im[1]] 
             X2 = np.concatenate(X2s)
 
             self.X = np.concatenate([X1s, X2s])
 
             self.y = np.concatenate([np.zeros((len(X1s))), np.ones((len(X2s)))])
-            # pool = ThreadPool(threads)
-            # self.loaded = 0
-            # results = pool.map(self.get_image, files)
-            # self.X = np.concatenate([d['X'] for d in results if d['X'].dtype != np.bool])       # using dtype as sentinel
-            # self.y = np.concatenate([d['y'] for d in results if d['X'].dtype != np.bool])
             if useCache:
                 try:
                     with open(p, 'wb+') as pkl:
@@ -76,8 +71,12 @@ class Data(object):
         image_data = imread(file)
         self.loaded += 1
         if self.loaded % 100 == 0: print('loaded ' + str(self.loaded))
+        keep = True
+        ratio = image_data.shape[0] / image_data.shape[1]
+        if ratio < 0.7 or ratio > 1/0.7:
+            keep = False
         image_data = imresize(image_data, dims)
-        return image_data
+        return image_data, keep 
 
     def get_image_(self, index_file):
         initial_y = self.initial_y      # not mutated by threads; everyone just has a reference
