@@ -10,12 +10,12 @@ import os
 import hashlib
 import _pickle as cPickle
 
-dims = (64,64)
+dims = (224,224)
 random_seed = 231
 
-DEFAULT_X1 = 'data/dogcat/PetImages/Cat'
-DEFAULT_X2 = 'data/dogcat/PetImages/Dog'
-# DEFAULT_Y = 'data/cars/y.npy'
+DEFAULT_X1 = 'cars_test'
+DEFAULT_X2 = 'cars_train'
+DEFAULT_Y = 'data/cars/y.npy'
 TRAIN_DEV_TEST = (0.65, 0.20, 0.15)
 
 PATH = '/Users/vineetedupuganti/Downloads/231N_Final_Project/231N-project'
