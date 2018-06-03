@@ -14,7 +14,7 @@ import _pickle as cPickle
 dims = (224, 224)
 random_seed = 231
 
-DEFAULT_X = 'car_images'
+DEFAULT_X = 'car_ims'
 DEFAULT_Y = 'y.npy'
 TRAIN_DEV_TEST = (0.65, 0.20, 0.15)
 
