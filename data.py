@@ -18,10 +18,10 @@ DEFAULT_X = 'car_ims'
 DEFAULT_Y = 'y.npy'
 TRAIN_DEV_TEST = (0.65, 0.20, 0.15)
 
-PATH = '/Users/vineetedupuganti/Downloads/231N_Final_Project/231N-project'
+PATH = '/home/vineetedupuganti/231N-project'
 
 class Data(object):
-    def __init__(self, xpath=DEFAULT_X, yfile=DEFAULT_Y, useCache=True, cacheSmash=False, threads=8, first=1000):      # 8 seems best on Google Cloud
+    def __init__(self, xpath=DEFAULT_X, yfile=DEFAULT_Y, useCache=True, cacheSmash=False, threads=8, first=2000):      # 8 seems best on Google Cloud
         assert(sum(TRAIN_DEV_TEST) == 1.0)
 
         h = hashlib.sha1(bytearray("".join(os.listdir(xpath)) + yfile + str(dims), 'utf-8')).hexdigest()
@@ -45,7 +45,9 @@ class Data(object):
                     files.append((int(image[:-4]), os.path.join(xpath, image)))
                 except:
                     continue
+            files = sorted(files, key=lambda x: x[0])
             files = files[:first]
+#             print(files)
             pool = ThreadPool(threads)
             self.loaded = 0
             results = pool.map(self.get_image, files)
@@ -269,7 +271,12 @@ class Data(object):
                 except:
                     print ('Cache dump failed.')
 
-        self.X = self.X.transpose(x_transpose)
+        self.X = self.X.
+        
+        
+        
+        
+      (x_transpose)
         self.num_examples = self.X.shape[0]
         np.random.seed(random_seed)
         self.indices = np.random.permutation(range(0, self.num_examples))
