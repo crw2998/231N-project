@@ -10,7 +10,7 @@ import os
 import hashlib
 import _pickle as cPickle
 
-dims = (64,64)
+dims = (224,224)
 random_seed = 231
 
 DEFAULT_X1 = 'data/dogcat/PetImages/Cat'
@@ -18,7 +18,7 @@ DEFAULT_X2 = 'data/dogcat/PetImages/Dog'
 # DEFAULT_Y = 'data/cars/y.npy'
 TRAIN_DEV_TEST = (0.65, 0.20, 0.15)
 
-PATH = '/Users/vineetedupuganti/Downloads/231N_Final_Project/231N-project'
+PATH = '/home/vineetedupuganti/231N-project'
 
 class Data(object):
     def __init__(self, xpath1=DEFAULT_X1, xpath2=DEFAULT_X2, useCache=True, cacheSmash=False, threads=8, first=10000000, x_transpose=(0,1,2,3)):      # 8 seems best on Google Cloud
