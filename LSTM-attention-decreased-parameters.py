@@ -22,9 +22,9 @@ CHECKPOINT_PATH = 'checkpoints/'
 
 
 d = Data(x_transpose=(0, 3, 1, 2))
-X_train,y_train = d.get_train()
+X_train, y_train = d.get_train()
 X_cross, y_cross = d.get_dev()
-X_test,y_test = d.get_test()
+X_test, y_test = d.get_test()
 
 
 # In[3]:
@@ -394,9 +394,12 @@ if USE_GPU:
 #     print (img.shape)
 #     imgplot = plt.imshow(img[100])
 #     break
-    
+
+################ comment out later
+# model.load_state_dict(torch.load('checkpoints/25.chkpoint'))
+
 optimizer = optim.Adam(model.parameters(), lr = learning_rate)
-loss_arr = train(model, optimizer, 40)
+loss_arr = train(model, optimizer, 48)
 print(loss_arr)
 
 plt.rcParams['figure.figsize'] = (10.0, 8.0) # set default size of plots
